@@ -22,22 +22,22 @@ case $pm_found in
 	apt)
 		echo "apt package manager detected...Ubuntu/Debian."
 			apt update
-			apt install curl
+			apt install -y curl
 		;;
 	pacman)
 		echo "pacman package manager detected...you use Arch btw."
 			pacman -Syu
-			pacman -S curl
+			pacman -Sy curl
 		;;
 	dnf)
 		echo "dnf package manager detected...I tip my hat to you."
 			dnf update
-			dnf install curl
+			dnf install -y curl
 		;;
 	xbps-install)
 		echo "xbps package manager detected...welcome to the Void."
 			xbps-install -Syu
-			xbps-install -S curl
+			xbps-install -Sy curl
 		;;
 	*)
 		echo "None of the common package managers were detected...please run the install command for your package manager to install the prerequisites."
