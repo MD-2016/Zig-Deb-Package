@@ -1,4 +1,50 @@
 #!/usr/bin/env bash
+#!/bin/bash
+
+# check for sudo
+if [ "$EUID" -ne 0 ]; then
+	echo "Not using super cow powers :( ...exiting"
+	exit 1
+else
+	echo "Running with super cow powers...continuing"
+fi
+
+# package manager array (feel free to fork this and add others)
+pkgmgr=("apt" "pacman" "dnf" "xbps-install")
+
+# find the current package manager
+for pm in ${pkgmgr[@]}; do
+	command -v $pm >/dev/null 2>&1 && echo "Found $pm" && pm_found=$pm
+done
+
+# run the appropriate install command for the detected pm...if one is not found, the script will exit gracefully.
+case $pm_found in
+	apt)
+		echo "apt package manager detected...Ubuntu/Debian."
+			apt update
+			apt install -y curl
+		;;
+	pacman)
+		echo "pacman package manager detected...you use Arch btw."
+			pacman -Syu
+			pacman -Sy curl
+		;;
+	dnf)
+		echo "dnf package manager detected...I tip my hat to you."
+			dnf update
+			dnf install -y curl
+		;;
+	xbps-install)
+		echo "xbps package manager detected...welcome to the Void."
+			xbps-install -Syu
+			xbps-install -Sy curl
+		;;
+	*)
+		echo "None of the common package managers were detected...please run the install command for your package manager to install the prerequisites."
+		exit 1
+		;;
+esac
+
 set -euo pipefail
 
 VERSION="0.17.1"
@@ -99,3 +145,6 @@ dpkg-deb --build --root-owner-group "${STAGE}"
 echo "Built ${STAGE}.deb successfully."
 echo "Checking directory entries in package:"
 dpkg-deb --contents "${STAGE}.deb" | awk '$1 ~ /^d/'
+
+# install the newly built .deb package
+dpkg -i "${STAGE}.deb"
