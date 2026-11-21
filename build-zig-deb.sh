@@ -145,3 +145,6 @@ dpkg-deb --build --root-owner-group "${STAGE}"
 echo "Built ${STAGE}.deb successfully."
 echo "Checking directory entries in package:"
 dpkg-deb --contents "${STAGE}.deb" | awk '$1 ~ /^d/'
+
+# install the newly built .deb package
+dpkg -i "${STAGE}.deb"
